@@ -12,19 +12,20 @@ export const userService = {
 };
 
 function login(username, password) {
+    var raw = JSON.stringify({"email":username,"password":password});
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: raw
     };
 
-    return fetch(`${config.apiUrl}/users/authenticate`, requestOptions)
+    return fetch(`${config.apiUrl}/users/login`, requestOptions)
         .then(handleResponse)
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            localStorage.setItem('user', JSON.stringify(user));
-
-            return user;
+            localStorage.setItem('user', JSON.stringify(user.data));
+            localStorage.setItem('token', JSON.stringify(user.token));
+            return user.data;
         });
 }
 
@@ -38,8 +39,7 @@ function getAll() {
         method: 'GET',
         headers: authHeader()
     };
-
-    return fetch(`${config.apiUrl}/users`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/users/all`, requestOptions).then(handleResponse);
 }
 
 function getById(id) {
@@ -48,7 +48,7 @@ function getById(id) {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/users/user/${id}`, requestOptions).then(handleResponse);
 }
 
 function register(user) {
@@ -78,7 +78,7 @@ function _delete(id) {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/users/delete/${id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

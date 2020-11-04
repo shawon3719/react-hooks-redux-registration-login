@@ -1,5 +1,6 @@
 // array in local storage for registered users
 let users = JSON.parse(localStorage.getItem('users')) || [];
+let access_token = localStorage.getItem('token') || [];
     
 export function configureFakeBackend() {
     let realFetch = window.fetch;
@@ -40,7 +41,7 @@ export function configureFakeBackend() {
                     username: user.username,
                     firstName: user.firstName,
                     lastName: user.lastName,
-                    token: 'fake-jwt-token'
+                    token: access_token
                 });
             }
 
@@ -88,7 +89,7 @@ export function configureFakeBackend() {
             }
 
             function isLoggedIn() {
-                return headers['Authorization'] === 'Bearer fake-jwt-token';
+                return headers['Authorization'] === 'Bearer '+access_token;
             }
     
             function idFromUrl() {
